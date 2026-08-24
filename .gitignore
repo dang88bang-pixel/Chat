@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Builds & caches
+dist/
+build/
+.expo/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Expo native projects (generated via `npx expo prebuild`)
+app/android/
+app/ios/

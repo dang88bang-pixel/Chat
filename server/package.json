@@ -1,0 +1,29 @@
+{
+  "name": "kat-orchestrator-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI API gateway for the KAT-Orchestrator native app: routes chat history to KAT-Coder-Air V2.5 via OpenRouter, executes CLI/API/SDK tools, and streams results back.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.46",
+    "@hono/node-server": "^1.19.0",
+    "ai": "^7.0.77",
+    "dotenv": "^17.2.1",
+    "hono": "^4.10.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}
