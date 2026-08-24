@@ -8,7 +8,6 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -40,13 +39,13 @@ function Header({ busy }: { busy: boolean }) {
   }, [busy, pulse]);
 
   return (
-    <View style={styles.header}>
-      <Text style={styles.headerTitle}>KAT-Orchestrator v2.5</Text>
+    <View className="h-[60px] border-b border-edge flex-row items-center justify-between px-5">
+      <Text className="text-primary text-base font-bold tracking-wide">
+        KAT-Orchestrator v2.5
+      </Text>
       <Animated.View
-        style={[
-          styles.statusIndicator,
-          { backgroundColor: busy ? colors.busy : colors.success, opacity: pulse },
-        ]}
+        className="w-2.5 h-2.5 rounded-full"
+        style={{ backgroundColor: busy ? colors.busy : colors.success, opacity: pulse }}
       />
     </View>
   );
@@ -54,9 +53,9 @@ function Header({ busy }: { busy: boolean }) {
 
 function EmptyState() {
   return (
-    <View style={styles.emptyState}>
-      <Text style={styles.emptyTitle}>Native AI Orchestration</Text>
-      <Text style={styles.emptyHint}>
+    <View className="items-center mt-12 px-6">
+      <Text className="text-primary text-lg font-bold mb-3">Native AI Orchestration</Text>
+      <Text className="text-secondary text-[13px] leading-5 text-center">
         Ask the orchestrator to run local CLI commands, call external REST APIs, or trigger
         SDK services.{'\n\n'}Try:{'\n'}• run git status in this repo{'\n'}• fetch
         https://api.github.com/repos/facebook/react-native{'\n'}• trigger cache service action
@@ -70,7 +69,7 @@ function EmptyState() {
 function MessageRow({ message }: { message: UIMessage }) {
   const isUser = message.role === 'user';
   return (
-    <View style={[styles.messageBubbleContainer, isUser ? styles.userAlign : styles.aiAlign]}>
+    <View className={`my-2 max-w-[85%] ${isUser ? 'self-end' : 'self-start'}`}>
       {message.parts.map((part, index) => {
         if (part.type === 'text') {
           return <MessageBubble key={`text-${index}`} role={message.role} text={part.text} />;
@@ -115,18 +114,18 @@ export default function ChatScreen() {
   }, [input, busy, sendMessage, clearError]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-bg">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+        className="flex-1"
       >
         <Header busy={busy} />
 
         {/* Message Thread Scroll Window */}
         <ScrollView
           ref={scrollRef}
-          style={styles.scrollArea}
-          contentContainerStyle={styles.scrollContent}
+          className="flex-1"
+          contentContainerClassName="py-5 px-4"
           keyboardShouldPersistTaps="handled"
         >
           {messages.length === 0 && <EmptyState />}
@@ -136,17 +135,17 @@ export default function ChatScreen() {
         </ScrollView>
 
         {error ? (
-          <View style={styles.errorBar}>
-            <Text style={styles.errorText} numberOfLines={2}>
+          <View className="mx-3 mb-1 bg-danger/15 border border-danger rounded-lg p-2">
+            <Text className="text-error-text text-xs" numberOfLines={2}>
               {error.message}
             </Text>
           </View>
         ) : null}
 
         {/* Input Interactive Bar */}
-        <View style={styles.inputContainer}>
+        <View className="flex-row p-3 border-t border-edge bg-surface">
           <TextInput
-            style={styles.inputField}
+            className="flex-1 h-[46px] bg-ai-bubble rounded-[23px] px-5 text-primary text-[15px]"
             value={input}
             onChangeText={setInput}
             onSubmitEditing={handleSend}
@@ -156,7 +155,9 @@ export default function ChatScreen() {
             returnKeyType="send"
           />
           <TouchableOpacity
-            style={[styles.sendButton, (busy || !input.trim()) && styles.disabledButton]}
+            className={`w-[46px] h-[46px] rounded-full justify-center items-center ml-2.5 ${
+              busy || !input.trim() ? 'bg-disabled' : 'bg-primary'
+            }`}
             onPress={handleSend}
             disabled={busy || !input.trim()}
             accessibilityLabel="Send message"
@@ -168,69 +169,3 @@ export default function ChatScreen() {
     </SafeAreaView>
   );
 }
-
-// Custom Deep Dark UI Theme Colors & Typography Layout Stylesheet
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  keyboardView: { flex: 1 },
-  header: {
-    height: 60,
-    borderBottomWidth: 1,
-    borderColor: colors.border,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  headerTitle: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  statusIndicator: { width: 10, height: 10, borderRadius: 5 },
-  scrollArea: { flex: 1 },
-  scrollContent: { paddingVertical: 20, paddingHorizontal: 16 },
-  emptyState: { alignItems: 'center', marginTop: 48, paddingHorizontal: 24 },
-  emptyTitle: { color: colors.textPrimary, fontSize: 18, fontWeight: '700', marginBottom: 12 },
-  emptyHint: { color: colors.textSecondary, fontSize: 13, lineHeight: 20, textAlign: 'center' },
-  messageBubbleContainer: { marginVertical: 8, maxWidth: '85%' },
-  userAlign: { alignSelf: 'flex-end' },
-  aiAlign: { alignSelf: 'flex-start' },
-  errorBar: {
-    marginHorizontal: 12,
-    marginBottom: 4,
-    backgroundColor: 'rgba(239,68,68,0.15)',
-    borderColor: colors.danger,
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 8,
-  },
-  errorText: { color: '#FCA5A5', fontSize: 12 },
-  inputContainer: {
-    flexDirection: 'row',
-    padding: 12,
-    borderTopWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  inputField: {
-    flex: 1,
-    height: 46,
-    backgroundColor: colors.aiBubble,
-    borderRadius: 23,
-    paddingHorizontal: 20,
-    color: colors.textPrimary,
-    fontSize: 15,
-  },
-  sendButton: {
-    width: 46,
-    height: 46,
-    backgroundColor: colors.textPrimary,
-    borderRadius: 23,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  disabledButton: { backgroundColor: colors.disabled },
-});

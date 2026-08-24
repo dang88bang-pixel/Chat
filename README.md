@@ -27,7 +27,7 @@ every invocation.
 
 | Path | Description |
 | --- | --- |
-| `app/` | Expo (SDK 57) TypeScript app — dark-themed chat UI with generative tool cards |
+| `app/` | Expo (SDK 57) TypeScript app — dark-themed chat UI with generative tool cards, styled with **NativeWind v4 (Tailwind CSS)** |
 | `server/` | Node.js AI gateway — streams responses and executes tools on the host |
 
 ## 1. Run the gateway
@@ -68,6 +68,20 @@ EXPO_PUBLIC_API_TOKEN=<token> npx expo start
 > They work in Expo Go where the module is bundled; otherwise run a development
 > build (`npx expo run:ios` / `npx expo run:android`).
 
+### Styling with NativeWind
+
+The UI is styled with NativeWind v4 (Tailwind CSS for React Native):
+
+- `global.css` is imported in `App.tsx`; Metro is wrapped with `withNativeWind`
+  (`metro.config.js`) and Babel uses `nativewind/babel` with
+  `jsxImportSource: 'nativewind'` (`babel.config.js`).
+- The dark palette lives in `tailwind.config.js` (`bg`, `surface`, `card`,
+  `edge`, `user-bubble`, …) — keep it in sync with `app/src/theme.ts`, which
+  supplies the few raw hex values JS still needs (animated status dot,
+  placeholder/icon colors).
+- Components use `className` (and `contentContainerClassName` on
+  `ScrollView`), e.g. `className="flex-row items-center bg-card rounded-xl"`.
+
 ## The tools
 
 | Tool | What it does | Guardrails |
@@ -105,5 +119,5 @@ beyond your machine:
 ## Roadmap / next steps
 
 - [ ] Wire a live AWS or Firebase SDK into `triggerSdkMethod` via `registerSdkHandler`
-- [ ] Integrate NativeWind (Tailwind CSS) styling in the app
+- [x] Integrate NativeWind (Tailwind CSS) styling in the app
 - [ ] Replace the bearer-token guard with real auth middleware (JWT/session)

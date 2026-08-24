@@ -1,6 +1,6 @@
 import { Cpu, Globe, Terminal } from 'lucide-react-native';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import {
   getToolName,
   isDynamicToolUIPart,
@@ -8,8 +8,6 @@ import {
   type ToolUIPart,
   type UITools,
 } from 'ai';
-
-import { colors } from '../theme';
 
 type AnyToolPart = ToolUIPart<UITools> | DynamicToolUIPart;
 
@@ -20,7 +18,7 @@ const TOOL_META: Record<string, { icon: 'terminal' | 'cpu' | 'globe'; color: str
 };
 
 function ToolIcon({ toolName }: { toolName: string }) {
-  const meta = TOOL_META[toolName] ?? { icon: 'cpu' as const, color: colors.textSecondary };
+  const meta = TOOL_META[toolName] ?? { icon: 'cpu' as const, color: '#9CA3AF' };
   if (meta.icon === 'terminal') return <Terminal size={16} color={meta.color} />;
   if (meta.icon === 'globe') return <Globe size={16} color={meta.color} />;
   return <Cpu size={16} color={meta.color} />;
@@ -45,65 +43,38 @@ export default function ToolCard({ part }: { part: AnyToolPart }) {
   const toolName = isDynamicToolUIPart(part) ? part.toolName : getToolName(part);
 
   return (
-    <View style={styles.toolCard}>
-      <View style={styles.toolHeaderRow}>
+    <View className="bg-card rounded-xl p-3 mt-2 border border-edge-light w-[280px]">
+      <View className="flex-row items-center mb-1.5">
         <ToolIcon toolName={toolName} />
-        <Text style={styles.toolTitle}>{prettifyToolName(toolName)}</Text>
+        <Text className="text-tool-title text-[13px] font-semibold ml-2">
+          {prettifyToolName(toolName)}
+        </Text>
       </View>
 
-      <Text style={styles.toolArguments} numberOfLines={3}>
+      <Text className="text-secondary text-[11px] font-mono mb-2" numberOfLines={3}>
         Args: {preview(part.input)}
       </Text>
 
       {part.state === 'output-available' ? (
-        <View style={[styles.toolBadge, styles.toolBadgeSuccess]}>
-          <Text style={styles.toolBadgeText}>
+        <View className="flex-row items-center bg-badge p-1.5 rounded-md border border-success">
+          <Text className="text-badge-text text-[11px] font-medium shrink">
             Result: {preview(part.output)}
           </Text>
         </View>
       ) : part.state === 'output-error' ? (
-        <View style={[styles.toolBadge, styles.toolBadgeError]}>
-          <Text style={styles.toolBadgeText}>
+        <View className="flex-row items-center bg-badge p-1.5 rounded-md border border-danger">
+          <Text className="text-badge-text text-[11px] font-medium shrink">
             Failed: {preview(part.errorText)}
           </Text>
         </View>
       ) : (
-        <View style={styles.toolBadge}>
-          <ActivityIndicator size="small" color="#fff" style={styles.spinner} />
-          <Text style={styles.toolBadgeText}>Orchestrating system resource...</Text>
+        <View className="flex-row items-center bg-badge p-1.5 rounded-md">
+          <ActivityIndicator size="small" color="#fff" style={{ marginRight: 8 }} />
+          <Text className="text-badge-text text-[11px] font-medium shrink">
+            Orchestrating system resource...
+          </Text>
         </View>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  toolCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    width: 280,
-  },
-  toolHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
-  toolTitle: { color: '#F3F4F6', fontSize: 13, fontWeight: '600', marginLeft: 8 },
-  toolArguments: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontFamily: 'monospace',
-    marginBottom: 8,
-  },
-  toolBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.badgeBg,
-    padding: 6,
-    borderRadius: 6,
-  },
-  toolBadgeSuccess: { borderColor: colors.success, borderWidth: 1 },
-  toolBadgeError: { borderColor: colors.danger, borderWidth: 1 },
-  spinner: { marginRight: 8 },
-  toolBadgeText: { color: '#E5E7EB', fontSize: 11, fontWeight: '500', flexShrink: 1 },
-});
