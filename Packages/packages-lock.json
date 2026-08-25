@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "resolutionSettings": [
+    {
+      "name": "Default",
+      "enabled": false,
+      "androidSplashResolution": {
+        "width": 1920,
+        "height": 1080
+      }
+    }
+  ]
+}
